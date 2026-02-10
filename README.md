@@ -142,7 +142,7 @@ src/
 
 🔧 Setup & Installation
 1️⃣ Clone the repository
-git clone https://github.com/Dishank_Jha/question-management-sheet.git
+git clone [https://github.com/Dishank_Jha/question-management-sheet.git](https://github.com/DishankJha/question-management-sheet.git)
 cd question-management-sheet
 
 2️⃣ Install dependencies
