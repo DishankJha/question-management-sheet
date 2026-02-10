@@ -1,9 +1,43 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function useTopics(setCompleted) {
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const recalcSubTopic = useCallback((sub) => {
+    const total = sub.questions.length;
+    const done = sub.questions.filter((q) => q.completed).length;
+    return { ...sub, total, done };
+  }, []);
+
+  const recalcTopic = useCallback(
+    (topic) => {
+      let total = 0;
+      let done = 0;
+
+      const updatedSubs = topic.subTopics.map((sub) => {
+        const newSub = recalcSubTopic(sub);
+        total += newSub.total;
+        done += newSub.done;
+        return newSub;
+      });
+
+      return { ...topic, subTopics: updatedSubs, total, done };
+    },
+    [recalcSubTopic]
+  );
+
+  const recalcAllProgress = useCallback(
+    (topicsList) => {
+      let done = 0;
+      topicsList.forEach((topic) => {
+        done += topic.done;
+      });
+      setCompleted(done);
+    },
+    [setCompleted]
+  );
 
   useEffect(() => {
     const fetchSheet = async () => {
@@ -37,7 +71,7 @@ export default function useTopics(setCompleted) {
             subTopicMap[sub].push({
               id: q._id,
               text: q.title || q.problem || "Untitled Question",
-              link: q.link || "", // <-- NEW FIELD
+              link: q.link || "",
               completed: false,
             });
           });
@@ -71,37 +105,9 @@ export default function useTopics(setCompleted) {
     };
 
     fetchSheet();
-  }, []);
+  }, [recalcAllProgress]);
 
-  const recalcSubTopic = (sub) => {
-    const total = sub.questions.length;
-    const done = sub.questions.filter((q) => q.completed).length;
-    return { ...sub, total, done };
-  };
-
-  const recalcTopic = (topic) => {
-    let total = 0;
-    let done = 0;
-
-    const updatedSubs = topic.subTopics.map((sub) => {
-      const newSub = recalcSubTopic(sub);
-      total += newSub.total;
-      done += newSub.done;
-      return newSub;
-    });
-
-    return { ...topic, subTopics: updatedSubs, total, done };
-  };
-
-  const recalcAllProgress = (topicsList) => {
-    let done = 0;
-    topicsList.forEach((topic) => {
-      done += topic.done;
-    });
-    setCompleted(done);
-  };
-
-  const updateTopics = (updater) => {
+  const updateTopics = useCallback((updater) => {
     setTopics((prev) => {
       const updated =
         typeof updater === "function" ? updater(prev) : updater;
@@ -109,7 +115,7 @@ export default function useTopics(setCompleted) {
       recalcAllProgress(updated);
       return updated;
     });
-  };
+  }, [recalcAllProgress]);
 
   const toggleQuestion = (topicId, subTopicId, qId) => {
     updateTopics((prev) =>
