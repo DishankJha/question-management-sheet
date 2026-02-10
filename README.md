@@ -107,21 +107,6 @@ Clicking opens the problem in a new tab
 
 If no link is provided, it behaves like normal text.
 
-🎯 7. Smart Revision Mode (Bonus Feature)
-
-This was added as a Bonus Improvement, as requested in the PS.
-
-What it does:
-
-When enabled, it highlights only incomplete questions, helping users focus on what they still need to revise.
-
-This is useful for:
-
-Interview prep
-
-Revision sessions
-
-Daily practice tracking
 
 🛠️ Tech Stack
 Frontend:
@@ -157,7 +142,7 @@ src/
 
 🔧 Setup & Installation
 1️⃣ Clone the repository
-git clone https://github.com/YOUR_USERNAME/question-management-sheet.git
+git clone https://github.com/Dishank_Jha/question-management-sheet.git
 cd question-management-sheet
 
 2️⃣ Install dependencies
